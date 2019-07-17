@@ -16,11 +16,23 @@ public class UserApplication {
 
     private User findByEmail(String email){
         Assert.notNull(email, "email no debe ser null");
+        Assert.hasText(email, "email no debe ser vacio");
         return this.userRepository.findByEmail(email);
     }
 
     public UserDto saveUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
+        Assert.notNull(userDto.getName(), "name no debe ser null");
+        Assert.notNull(userDto.getLastName(), "lastName no debe ser null");
+        Assert.notNull(userDto.getBirthday(), "birthday no debe ser null");
+        Assert.notNull(userDto.getEmail(), "email no debe ser null");
+        Assert.notNull(userDto.getPassword(), "password no debe ser null");
+        Assert.notNull(userDto.getRole(), "role no debe ser null");
+        Assert.hasText(userDto.getName(), "name no debe ser vacio");
+        Assert.hasText(userDto.getLastName(), "lastName no debe ser vacio");
+        Assert.hasText(userDto.getEmail(), "email no debe ser vacio");
+        Assert.hasText(userDto.getPassword(), "password no debe ser vacio");
+        Assert.hasText(userDto.getRole(), "role no debe ser vacio");
 
         User user = this.findByEmail(userDto.getEmail());
         if(user != null){
