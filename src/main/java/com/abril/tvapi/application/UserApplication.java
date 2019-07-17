@@ -14,10 +14,15 @@ public class UserApplication {
     @Autowired
     private UserRepository userRepository;
 
-    private User findByEmail(String email){
+    public User findByEmail(String email){
         Assert.notNull(email, "email no debe ser null");
         Assert.hasText(email, "email no debe ser vacio");
         return this.userRepository.findByEmail(email);
+    }
+
+    public User findById(Integer id){
+        Assert.notNull(id, "id no debe ser null");
+        return new User();
     }
 
     public UserDto saveUser(UserDto userDto) throws Exception {

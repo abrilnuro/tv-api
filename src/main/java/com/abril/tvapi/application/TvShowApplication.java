@@ -1,6 +1,7 @@
 package com.abril.tvapi.application;
 
 import com.abril.tvapi.entity.TvShow;
+import com.abril.tvapi.entity.User;
 import com.abril.tvapi.entity.dto.TvShowDto;
 import com.abril.tvapi.repository.TvShowRepository;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +14,9 @@ public class TvShowApplication {
 
     @Autowired
     TvShowRepository tvShowRepository;
+
+    @Autowired
+    UserApplication userApplication;
 
     private TvShow findByName(String name){
         Assert.hasText(name, "name no sebe ser empty");
@@ -41,5 +45,19 @@ public class TvShowApplication {
         BeanUtils.copyProperties(tvShowDto, tvShow);
         this.tvShowRepository.save(tvShow);
         return tvShowDto;
+    }
+
+    public void deleteTvShow(Integer idTvShow, Integer idUser) throws Exception {
+        Assert.notNull(idTvShow, "idTvShow no debe ser null");
+        Assert.notNull(idUser, "idUser no debe ser null");
+
+        User user = this.userApplication.findById(idUser);
+        if(user == null){
+            throw new Exception("No existe usuario con ese id");
+        }
+
+        if(user.getRole().equals(User.USER_ROLE_USER)){
+            throw new Exception("Los usuarios con rol de " + User.USER_ROLE_USER + "no pueden borrar");
+        }
     }
 }
