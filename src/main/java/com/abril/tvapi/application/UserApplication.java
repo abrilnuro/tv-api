@@ -20,9 +20,9 @@ public class UserApplication {
         return this.userRepository.findByEmail(email);
     }
 
-    public User findById(Integer id){
+    public User findUserById(Integer id){
         Assert.notNull(id, "id no debe ser null");
-        return new User();
+        return this.userRepository.findUserById(id);
     }
 
     public UserDto saveUser(UserDto userDto) throws Exception {

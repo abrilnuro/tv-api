@@ -9,4 +9,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface UserRepository extends CrudRepository<User, Integer> {
 
     User findByEmail(@Param("email") String email);
+
+    User findUserById(@Param("id") Integer id);
 }

@@ -17,6 +17,8 @@ public class User {
 
     public final static String USER_ROLE_USER = "user";
     public final static String USER_ROLE_ADMIN = "admin";
+    public final static String USER_STATUS_ACTIVO = "activo";
+    public final static String USER_STATUS_INACTIVO = "inactivo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

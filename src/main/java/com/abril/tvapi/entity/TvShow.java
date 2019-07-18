@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -21,13 +20,15 @@ public class TvShow {
 
     private String name;
 
-    private Integer runtime;
-
     private String resume;
 
     private Date releaseDate;
 
     private String language;
+
+    private String poster;
+
+    private String genre;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mazatlan")
     private Date created_at;

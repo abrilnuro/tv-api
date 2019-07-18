@@ -18,6 +18,8 @@ public class TvShowApplication {
     @Autowired
     UserApplication userApplication;
 
+
+
     private TvShow findByName(String name){
         Assert.hasText(name, "name no sebe ser empty");
         return this.tvShowRepository.findByName(name);
@@ -47,17 +49,26 @@ public class TvShowApplication {
         return tvShowDto;
     }
 
-    public void deleteTvShow(Integer idTvShow, Integer idUser) throws Exception {
+    public String deleteTvShow(Integer idTvShow, Integer idUser) throws Exception {
         Assert.notNull(idTvShow, "idTvShow no debe ser null");
         Assert.notNull(idUser, "idUser no debe ser null");
 
-        User user = this.userApplication.findById(idUser);
+        User user = this.userApplication.findUserById(idUser);
         if(user == null){
             throw new Exception("No existe usuario con ese id");
         }
 
-        if(user.getRole().equals(User.USER_ROLE_USER)){
-            throw new Exception("Los usuarios con rol de " + User.USER_ROLE_USER + "no pueden borrar");
+        if(user.getStatus().equals(User.USER_STATUS_INACTIVO)){
+            throw new Exception("El usuario se encuentra con estatus inactivo");
         }
+
+        if(user.getRole().equals(User.USER_ROLE_USER)){
+            throw new Exception("Los usuarios con rol de " + User.USER_ROLE_USER + " no pueden borrar registros");
+        }
+
+        this.tvShowRepository.deleteById(idTvShow);
+        return "Se borró registro";
     }
 }
+
+
