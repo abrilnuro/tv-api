@@ -17,6 +17,12 @@ public class TvShowController {
         return this.tvShowApplication.saveTvShow(tvShowDto);
     }
 
+    @PutMapping(value = "{id}")
+    public TvShowDto updateTvShow(@PathVariable("id") Integer id,
+                                  @RequestBody TvShowDto tvShowDto) throws Exception {
+        return this.tvShowApplication.updateTvShow(id, tvShowDto);
+    }
+
     @DeleteMapping(value = "{idTvShow}/user")
     public String deleteTvShow(@PathVariable("idTvShow") Integer idTvShow,
                                @RequestParam("id") Integer idUser) throws Exception {

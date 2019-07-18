@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Optional;
+
 @Component
 public class TvShowApplication {
 
@@ -17,8 +19,6 @@ public class TvShowApplication {
 
     @Autowired
     UserApplication userApplication;
-
-
 
     private TvShow findByName(String name){
         Assert.hasText(name, "name no sebe ser empty");
@@ -46,6 +46,22 @@ public class TvShowApplication {
         tvShow = new TvShow();
         BeanUtils.copyProperties(tvShowDto, tvShow);
         this.tvShowRepository.save(tvShow);
+        return tvShowDto;
+    }
+
+    public TvShowDto updateTvShow(Integer idTvShow, TvShowDto tvShowDto) throws Exception {
+        Assert.notNull(tvShowDto, "idTvShow no debe ser null");
+        Assert.notNull(idTvShow, "id no debe ser null");
+
+        TvShow tvShow = this.tvShowRepository.findTvShowById(idTvShow);
+        if(tvShow == null){
+            throw new Exception("No existe tv show con ese id");
+        }
+
+        BeanUtils.copyProperties(tvShowDto, tvShow);
+        tvShow.setId(idTvShow);
+        this.tvShowRepository.save(tvShow);
+
         return tvShowDto;
     }
 

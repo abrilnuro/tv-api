@@ -9,4 +9,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface TvShowRepository extends CrudRepository<TvShow, Integer> {
 
     TvShow findByName( @Param("name") String name);
+
+    TvShow findTvShowById( @Param("id") Integer id);
 }
