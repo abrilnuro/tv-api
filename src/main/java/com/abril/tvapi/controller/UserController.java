@@ -17,6 +17,11 @@ public class UserController {
         return this.userApplication.saveUser(userDto);
     }
 
+    @PutMapping
+    public String updateUser(@RequestBody UserDto userDto) throws Exception {
+        return this.userApplication.updateUser(userDto);
+    }
+
     @GetMapping
     public UserDto logIn(@RequestParam("email") String email,
                          @RequestParam("password") String password) throws Exception {

@@ -61,6 +61,24 @@ public class UserApplication {
         return userDto;
     }
 
+    public String updateUser(UserDto userDto) throws Exception {
+        Assert.notNull(userDto, "userDto no debe ser null");
+
+        Integer id = userDto.getId();
+        Assert.notNull(id, "id no debe ser null");
+
+        User user = this.findUserById(id);
+        if(user == null){
+            throw new Exception("No existe usuario con ese id");
+        }
+
+        user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        this.userRepository.save(user);
+
+        return "se modificó user";
+    }
+
     public UserDto logIn(String email, String password) throws Exception {
         Assert.notNull(email, "email no debe ser null");
         Assert.notNull(password, "password no debe ser null");
