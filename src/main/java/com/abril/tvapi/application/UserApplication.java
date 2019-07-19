@@ -5,6 +5,7 @@ import com.abril.tvapi.entity.dto.UserDto;
 import com.abril.tvapi.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -51,7 +52,34 @@ public class UserApplication {
 
         user = new User();
         BeanUtils.copyProperties(userDto, user);
+
+        String password = BCrypt.hashpw(userDto.getPassword() ,BCrypt.gensalt());
+        user.setPassword(password);
+
         this.userRepository.save(user);
+
+        return userDto;
+    }
+
+    public UserDto logIn(String email, String password) throws Exception {
+        Assert.notNull(email, "email no debe ser null");
+        Assert.notNull(password, "password no debe ser null");
+        Assert.hasText(email, "email no debe ser vacio");
+        Assert.hasText(password, "password no debe ser vacio");
+
+        User user = this.findByEmail(email);
+        if(user == null){
+            throw new Exception("No existe usuario con ese email");
+        }
+
+        Boolean correctPassword = BCrypt.checkpw(password, user.getPassword());
+        if(!correctPassword){
+            throw new Exception("La contraseña es incorrecta");
+        }
+
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+
         return userDto;
     }
 }
