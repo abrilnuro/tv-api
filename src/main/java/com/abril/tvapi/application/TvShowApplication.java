@@ -4,6 +4,7 @@ import com.abril.tvapi.entity.TvShow;
 import com.abril.tvapi.entity.User;
 import com.abril.tvapi.entity.dto.TvShowDto;
 import com.abril.tvapi.repository.TvShowRepository;
+import com.abril.tvapi.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class TvShowApplication {
     TvShowRepository tvShowRepository;
 
     @Autowired
-    UserApplication userApplication;
+    UserRepository userRepository;
 
     private TvShow findByName(String name){
         Assert.hasText(name, "name no sebe ser empty");
@@ -69,10 +70,10 @@ public class TvShowApplication {
         Assert.notNull(idTvShow, "idTvShow no debe ser null");
         Assert.notNull(idUser, "idUser no debe ser null");
 
-        User user = this.userApplication.findUserById(idUser);
-        if(user == null){
-            throw new Exception("No existe usuario con ese id");
-        }
+        Optional<User> optionalUser = this.userRepository.findById(idUser);
+        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese id");
+
+        User user = optionalUser.get();
 
         if(user.getStatus().equals(User.USER_STATUS_INACTIVO)){
             throw new Exception("El usuario se encuentra con estatus inactivo");

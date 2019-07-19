@@ -22,6 +22,12 @@ public class UserController {
         return this.userApplication.updateUser(userDto);
     }
 
+    @PutMapping(value = "{id}/status")
+    public String updateStatus(@PathVariable Integer id,
+                               @RequestParam String status ) throws Exception {
+        return this.userApplication.updateStatus(id, status);
+    }
+
     @GetMapping
     public UserDto logIn(@RequestParam("email") String email,
                          @RequestParam("password") String password) throws Exception {

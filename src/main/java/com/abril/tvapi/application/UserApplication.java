@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import java.util.Optional;
 
 @Component
 public class UserApplication {
@@ -19,11 +20,6 @@ public class UserApplication {
         Assert.notNull(email, "email no debe ser null");
         Assert.hasText(email, "email no debe ser vacio");
         return this.userRepository.findByEmail(email);
-    }
-
-    public User findUserById(Integer id){
-        Assert.notNull(id, "id no debe ser null");
-        return this.userRepository.findUserById(id);
     }
 
     public UserDto saveUser(UserDto userDto) throws Exception {
@@ -63,20 +59,36 @@ public class UserApplication {
 
     public String updateUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
+        Assert.notNull(userDto.getId(), "id no debe ser null");
 
-        Integer id = userDto.getId();
-        Assert.notNull(id, "id no debe ser null");
+        Optional<User> optionalUser = this.userRepository.findById(userDto.getId());
+        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese id");
 
-        User user = this.findUserById(id);
-        if(user == null){
-            throw new Exception("No existe usuario con ese id");
-        }
-
-        user = new User();
+        User user = optionalUser.get();
         BeanUtils.copyProperties(userDto, user);
         this.userRepository.save(user);
 
         return "se modificó user";
+    }
+
+    public String updateStatus(Integer id, String status) throws Exception {
+        Assert.notNull(id, "id no debe ser null");
+        Assert.notNull(status, "status no debe ser null");
+        Assert.hasText(status, "status no debe ser vacio");
+
+        Optional<User> optionalUser = this.userRepository.findById(id);
+        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese id");
+
+        if(!status.equals(User.USER_STATUS_ACTIVO) && !status.equals(User.USER_STATUS_INACTIVO)){
+            throw new Exception("No existe el status " + status);
+        }
+
+        User user = optionalUser.get();
+        user.setStatus(status);
+
+        this.userRepository.save(user);
+
+        return "se modificó status de user";
     }
 
     public UserDto logIn(String email, String password) throws Exception {
