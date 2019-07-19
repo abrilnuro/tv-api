@@ -79,9 +79,9 @@ public class UserApplication {
         Optional<User> optionalUser = this.userRepository.findById(id);
         Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese id");
 
-        if(!status.equals(User.USER_STATUS_ACTIVO) && !status.equals(User.USER_STATUS_INACTIVO)){
-            throw new Exception("No existe el status " + status);
-        }
+        Boolean statusIsPresent = Optional.of(status).filter(y -> y.equals(User.USER_STATUS_ACTIVO) ||
+                y.equals(User.USER_STATUS_INACTIVO)).isPresent();
+        Assert.isTrue(statusIsPresent, "No existe el status " + status);
 
         User user = optionalUser.get();
         user.setStatus(status);
