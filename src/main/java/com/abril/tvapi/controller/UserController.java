@@ -1,10 +1,9 @@
 package com.abril.tvapi.controller;
 
 import com.abril.tvapi.application.UserApplication;
+import com.abril.tvapi.entity.User;
 import com.abril.tvapi.entity.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +15,12 @@ public class UserController {
     private UserApplication userApplication;
 
     @PostMapping
-    public UserDto saveUser(@RequestBody UserDto userDto) throws Exception {
-        return this.userApplication.saveUser(userDto);
+    public ResponseEntity<User> save(@RequestBody UserDto userDto) throws Exception {
+         return this.userApplication.saveUser(userDto);
     }
 
     @PutMapping
-    public String updateUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) throws Exception {
         return this.userApplication.updateUser(userDto);
     }
 

@@ -5,6 +5,8 @@ import com.abril.tvapi.entity.dto.UserDto;
 import com.abril.tvapi.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -22,7 +24,7 @@ public class UserApplication {
         return this.userRepository.findByEmail(email);
     }
 
-    public UserDto saveUser(UserDto userDto) throws Exception {
+    public ResponseEntity<User> saveUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getName(), "name no debe ser null");
         Assert.notNull(userDto.getLastName(), "lastName no debe ser null");
@@ -35,6 +37,7 @@ public class UserApplication {
         Assert.hasText(userDto.getEmail(), "email no debe ser vacio");
         Assert.hasText(userDto.getPassword(), "password no debe ser vacio");
         Assert.hasText(userDto.getRole(), "role no debe ser vacio");
+
 
         Optional<User> optionalUser = this.findByEmail(userDto.getEmail());
         if(optionalUser.isPresent()){
@@ -52,12 +55,16 @@ public class UserApplication {
         String password = BCrypt.hashpw(userDto.getPassword() ,BCrypt.gensalt());
         user.setPassword(password);
 
-        this.userRepository.save(user);
+        User save = this.userRepository.save(user);
 
-        return userDto;
+        if(save == null){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(save, HttpStatus.OK);
     }
 
-    public String updateUser(UserDto userDto) {
+    public ResponseEntity<User> updateUser(UserDto userDto) {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getId(), "id no debe ser null");
 
@@ -71,9 +78,12 @@ public class UserApplication {
             user.setPassword(BCrypt.hashpw(userDto.getPassword() ,BCrypt.gensalt()));
         }
 
-        this.userRepository.save(user);
+        User update = this.userRepository.save(user);
+        if(update == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        return "se modificó user";
+        return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
     public String updateStatus(Integer id, String status) throws Exception {
