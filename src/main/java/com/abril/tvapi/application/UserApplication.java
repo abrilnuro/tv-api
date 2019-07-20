@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Component
 public class UserApplication {
