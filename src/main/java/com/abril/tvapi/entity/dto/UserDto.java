@@ -1,5 +1,6 @@
 package com.abril.tvapi.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ public class UserDto {
 
     private String password;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mazatlan")
     private Date birthday;
 
     private String role;
