@@ -59,7 +59,7 @@ public class ActorApplication {
 
     public String deleteActor(Integer idActor, Integer idUser){
         Assert.notNull(idActor, "idActor no debe ser null");
-        Assert.notNull(idActor, "idUser no debe ser null");
+        Assert.notNull(idUser, "idUser no debe ser null");
 
         Optional<Actor> optionalActor = this.actorRepository.findById(idActor);
         Assert.isTrue(optionalActor.isPresent(), "No existe actor con ese id");
