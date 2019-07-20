@@ -81,7 +81,7 @@ public class TvShowApplication {
         Assert.isTrue(status,"El usuario se encuentra con estatus inactivo");
 
         Boolean role = Optional.of(user.getRole()).filter(y -> y.equals(User.USER_ROLE_ADMIN)).isPresent();
-        Assert.isTrue(role, "Los usuarios con rol de " + User.USER_ROLE_USER + " no pueden borrar registros");
+        Assert.isTrue(role, "Los usuarios con rol de " + user.getRole() + " no pueden borrar registros");
 
         this.tvShowRepository.deleteById(idTvShow);
 
