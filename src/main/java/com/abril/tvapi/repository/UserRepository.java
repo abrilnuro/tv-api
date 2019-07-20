@@ -5,10 +5,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import java.util.Optional;
+
 @RestResource(exported = false)
 public interface UserRepository extends CrudRepository<User, Integer> {
 
-    User findByEmail(@Param("email") String email);
+    Optional<User> findByEmail(@Param("email") String email);
 
     User findUserById(@Param("id") Integer id);
 }

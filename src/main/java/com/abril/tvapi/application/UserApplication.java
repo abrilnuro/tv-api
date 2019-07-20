@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Component
 public class UserApplication {
@@ -16,7 +17,7 @@ public class UserApplication {
     @Autowired
     private UserRepository userRepository;
 
-    public User findByEmail(String email){
+    public Optional<User> findByEmail(String email){
         Assert.notNull(email, "email no debe ser null");
         Assert.hasText(email, "email no debe ser vacio");
         return this.userRepository.findByEmail(email);
@@ -36,17 +37,17 @@ public class UserApplication {
         Assert.hasText(userDto.getPassword(), "password no debe ser vacio");
         Assert.hasText(userDto.getRole(), "role no debe ser vacio");
 
-        User user = this.findByEmail(userDto.getEmail());
-        if(user != null){
+        Optional<User> optionalUser = this.findByEmail(userDto.getEmail());
+        if(optionalUser.isPresent()){
             throw new Exception("Ya existe un usuario con ese correo");
         }
 
         String role = userDto.getRole();
-        if(!role.contains(User.USER_ROLE_ADMIN) && !role.contains(User.USER_ROLE_USER) ){
-            throw new Exception("No existe el role de usuario: " + role);
-        }
+        Boolean existsRole = Optional.of(role).filter(y -> y.equals(User.USER_ROLE_ADMIN) ||
+                y.equals(User.USER_ROLE_USER)).isPresent();
+        Assert.isTrue(existsRole, "No existe el role de usuario: " + role);
 
-        user = new User();
+        User user = new User();
         BeanUtils.copyProperties(userDto, user);
 
         String password = BCrypt.hashpw(userDto.getPassword() ,BCrypt.gensalt());
@@ -57,7 +58,7 @@ public class UserApplication {
         return userDto;
     }
 
-    public String updateUser(UserDto userDto) throws Exception {
+    public String updateUser(UserDto userDto) {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getId(), "id no debe ser null");
 
@@ -66,6 +67,11 @@ public class UserApplication {
 
         User user = optionalUser.get();
         BeanUtils.copyProperties(userDto, user);
+
+        if(userDto.getPassword() != null){
+            user.setPassword(BCrypt.hashpw(userDto.getPassword() ,BCrypt.gensalt()));
+        }
+
         this.userRepository.save(user);
 
         return "se modificó user";
@@ -97,15 +103,13 @@ public class UserApplication {
         Assert.hasText(email, "email no debe ser vacio");
         Assert.hasText(password, "password no debe ser vacio");
 
-        User user = this.findByEmail(email);
-        if(user == null){
-            throw new Exception("No existe usuario con ese email");
-        }
+        Optional<User> optionalUser = this.findByEmail(email);
+        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese email");
+
+        User user = optionalUser.get();
 
         Boolean correctPassword = BCrypt.checkpw(password, user.getPassword());
-        if(!correctPassword){
-            throw new Exception("La contraseña es incorrecta");
-        }
+        Assert.isTrue(correctPassword, "La contraseña es incorrecta");
 
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto);

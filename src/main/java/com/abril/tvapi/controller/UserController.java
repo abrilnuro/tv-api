@@ -22,9 +22,9 @@ public class UserController {
         return this.userApplication.updateUser(userDto);
     }
 
-    @PutMapping(value = "{id}/status")
-    public String updateStatus(@PathVariable Integer id,
-                               @RequestParam String status ) throws Exception {
+    @PutMapping(value = "{id}")
+    public String updateStatus(@PathVariable("id") Integer id,
+                               @RequestParam("status") String status ) throws Exception {
         return this.userApplication.updateStatus(id, status);
     }
 
