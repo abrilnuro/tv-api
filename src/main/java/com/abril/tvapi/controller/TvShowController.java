@@ -23,7 +23,7 @@ public class TvShowController {
         return this.tvShowApplication.updateTvShow(id, tvShowDto);
     }
 
-    @DeleteMapping
+    @DeleteMapping(value = "{idTvShow}/user")
     public String deleteTvShow(@PathVariable("idTvShow") Integer idTvShow,
                                @RequestParam("id") Integer idUser) throws Exception {
         return this.tvShowApplication.deleteTvShow(idTvShow, idUser);

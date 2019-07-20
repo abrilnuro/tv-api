@@ -77,15 +77,14 @@ public class TvShowApplication {
 
         User user = optionalUser.get();
 
-        if(user.getStatus().equals(User.USER_STATUS_INACTIVO)){
-            throw new Exception("El usuario se encuentra con estatus inactivo");
-        }
+        Boolean status = Optional.of(user.getStatus()).filter(y -> y.equals(User.USER_STATUS_ACTIVO)).isPresent();
+        Assert.isTrue(status,"El usuario se encuentra con estatus inactivo");
 
-        if(user.getRole().equals(User.USER_ROLE_USER)){
-            throw new Exception("Los usuarios con rol de " + User.USER_ROLE_USER + " no pueden borrar registros");
-        }
+        Boolean role = Optional.of(user.getRole()).filter(y -> y.equals(User.USER_ROLE_ADMIN)).isPresent();
+        Assert.isTrue(role, "Los usuarios con rol de " + User.USER_ROLE_USER + " no pueden borrar registros");
 
         this.tvShowRepository.deleteById(idTvShow);
+
         return "Se borró registro";
     }
 }
