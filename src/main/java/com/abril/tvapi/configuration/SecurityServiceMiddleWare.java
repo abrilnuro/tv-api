@@ -1,5 +1,7 @@
 package com.abril.tvapi.configuration;
 
+import com.abril.tvapi.services.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
@@ -11,6 +13,9 @@ import java.util.Arrays;
 
 @Component
 public class SecurityServiceMiddleWare extends OncePerRequestFilter {
+
+  @Autowired
+  RedisService redisService;
 
   private static final String[] TO_EXCLUDE = {
       "/api/user"
@@ -25,6 +30,9 @@ public class SecurityServiceMiddleWare extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
+
+    //validar que el token del header
+    this.redisService.get(request.getHeader("autorization"));
 
     filterChain.doFilter(request, response);
   }

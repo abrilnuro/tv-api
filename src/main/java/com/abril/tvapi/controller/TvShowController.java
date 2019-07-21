@@ -3,6 +3,7 @@ package com.abril.tvapi.controller;
 import com.abril.tvapi.application.TvShowApplication;
 import com.abril.tvapi.entity.dto.TvShowDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,14 +14,13 @@ public class TvShowController {
     TvShowApplication tvShowApplication;
 
     @PostMapping
-    public TvShowDto saveTvShow(@RequestBody TvShowDto tvShowDto) throws Exception {
+    public ResponseEntity<TvShowDto> saveTvShow(@RequestBody TvShowDto tvShowDto) throws Exception {
         return this.tvShowApplication.saveTvShow(tvShowDto);
     }
 
-    @PutMapping(value = "{id}")
-    public TvShowDto updateTvShow(@PathVariable("id") Integer id,
-                                  @RequestBody TvShowDto tvShowDto) throws Exception {
-        return this.tvShowApplication.updateTvShow(id, tvShowDto);
+    @PutMapping()
+    public ResponseEntity<TvShowDto> updateTvShow(@RequestBody TvShowDto tvShowDto) throws Exception {
+        return this.tvShowApplication.updateTvShow(tvShowDto);
     }
 
     @DeleteMapping(value = "{idTvShow}/user")

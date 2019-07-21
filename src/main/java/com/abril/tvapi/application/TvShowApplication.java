@@ -7,8 +7,11 @@ import com.abril.tvapi.repository.TvShowRepository;
 import com.abril.tvapi.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
 import java.util.Optional;
 
 @Component
@@ -25,7 +28,7 @@ public class TvShowApplication {
         return this.tvShowRepository.findByName(name);
     }
 
-    public TvShowDto saveTvShow(TvShowDto tvShowDto) throws Exception {
+    public ResponseEntity<TvShowDto> saveTvShow(TvShowDto tvShowDto) throws Exception {
         Assert.notNull(tvShowDto, "tvShowDto no debe ser null");
         Assert.notNull(tvShowDto.getName(), "name no debe ser null");
         Assert.notNull(tvShowDto.getGenre(), "genre no debe ser null");
@@ -45,24 +48,29 @@ public class TvShowApplication {
 
         TvShow tvShow = new TvShow();
         BeanUtils.copyProperties(tvShowDto, tvShow);
-        this.tvShowRepository.save(tvShow);
 
-        return tvShowDto;
+        Optional<TvShow> saved = Optional.ofNullable(this.tvShowRepository.save(tvShow));
+        if(!saved.isPresent()){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        tvShowDto.setId(saved.get().getId());
+        return new ResponseEntity<>(tvShowDto, HttpStatus.OK);
     }
 
-    public TvShowDto updateTvShow(Integer idTvShow, TvShowDto tvShowDto) throws Exception {
+    public ResponseEntity<TvShowDto> updateTvShow(TvShowDto tvShowDto) throws Exception {
         Assert.notNull(tvShowDto, "idTvShow no debe ser null");
-        Assert.notNull(idTvShow, "id no debe ser null");
 
-        Optional<TvShow> optionalTvShow = this.tvShowRepository.findById(idTvShow);
+        Optional<TvShow> optionalTvShow = this.tvShowRepository.findById(tvShowDto.getId());
         Assert.isTrue(optionalTvShow.isPresent(), "No existe tv show con ese id");
 
         TvShow tvShow = optionalTvShow.get();
         BeanUtils.copyProperties(tvShowDto, tvShow);
-        tvShow.setId(idTvShow);
+
+        tvShow.setId(tvShowDto.getId());
         this.tvShowRepository.save(tvShow);
 
-        return tvShowDto;
+        return new ResponseEntity<>(tvShowDto, HttpStatus.OK);
     }
 
     public String deleteTvShow(Integer idTvShow, Integer idUser) throws Exception {
