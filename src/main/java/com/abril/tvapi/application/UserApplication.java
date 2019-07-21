@@ -86,7 +86,7 @@ public class UserApplication {
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    public String updateStatus(Integer id, String status) throws Exception {
+    public ResponseEntity<User> updateStatus(Integer id, String status) throws Exception {
         Assert.notNull(id, "id no debe ser null");
         Assert.notNull(status, "status no debe ser null");
         Assert.hasText(status, "status no debe ser vacio");
@@ -101,12 +101,14 @@ public class UserApplication {
         User user = optionalUser.get();
         user.setStatus(status);
 
-        this.userRepository.save(user);
-
-        return "se modificó status de user";
+        User update = this.userRepository.save(user);
+        if(update == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    public UserDto logIn(String email, String password) throws Exception {
+    public ResponseEntity<User> logIn(String email, String password) throws Exception {
         Assert.notNull(email, "email no debe ser null");
         Assert.notNull(password, "password no debe ser null");
         Assert.hasText(email, "email no debe ser vacio");
@@ -120,9 +122,6 @@ public class UserApplication {
         Boolean correctPassword = BCrypt.checkpw(password, user.getPassword());
         Assert.isTrue(correctPassword, "La contraseña es incorrecta");
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto);
-
-        return userDto;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

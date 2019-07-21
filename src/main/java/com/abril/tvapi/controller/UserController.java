@@ -25,14 +25,14 @@ public class UserController {
     }
 
     @PutMapping(value = "{id}")
-    public String updateStatus(@PathVariable("id") Integer id,
+    public ResponseEntity<User> updateStatus(@PathVariable("id") Integer id,
                                @RequestParam("status") String status ) throws Exception {
         return this.userApplication.updateStatus(id, status);
     }
 
     @GetMapping
-    public UserDto logIn(@RequestParam("email") String email,
-                         @RequestParam("password") String password) throws Exception {
+    public ResponseEntity<User> logIn(@RequestParam("email") String email,
+                                      @RequestParam("password") String password) throws Exception {
         return this.userApplication.logIn(email, password);
     }
 }
