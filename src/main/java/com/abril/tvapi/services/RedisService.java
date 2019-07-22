@@ -19,10 +19,10 @@ public class RedisService {
     private RedisConfig redisConfig;
 
     public void save(String key, String value){
-        Assert.notNull(key, "La llave no debe ser nulo.");
-        Assert.notNull(value, "El valor no debe ser nulo.");
-        Assert.hasText(key, "La llave no debe ser vacía.");
-        Assert.hasText(value, "El valor no debe ser vacía.");
+        Assert.notNull(key, "key no debe ser nulo.");
+        Assert.notNull(value, "value no debe ser nulo.");
+        Assert.hasText(key, "key no debe ser vacía.");
+        Assert.hasText(value, "value no debe ser vacía.");
 
         ValueOperations<String, JSONObject> jsonRedis = jsonRedisTemplate.opsForValue();
         Boolean redisIsAvalible = this.redisConfig.redisIsAvalible();

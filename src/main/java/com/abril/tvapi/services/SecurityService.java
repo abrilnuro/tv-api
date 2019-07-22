@@ -59,12 +59,11 @@ public class SecurityService {
     }
 
     public String getToken(String userName) throws Exception {
-        Assert.notNull(userName, "user no debe ser null");
-        Assert.hasText(userName, "user no debe ser vacio");
+        Assert.notNull(userName, "userName no debe ser null");
+        Assert.hasText(userName, "userName no debe ser vacio");
 
         String token = this.encode(userName);
-        JSONObject jsonObject = new JSONObject().put("token", token);
-        this.redisService.setIfIsAvailable(userName, jsonObject);
+        this.redisService.save(userName, token);
 
         return token;
     }
