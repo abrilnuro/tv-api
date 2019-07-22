@@ -16,4 +16,8 @@ public class GlobalConfig {
     @Getter
     @Value("${redis.port}")
     private Integer redisPort;
+
+    @Getter
+    @Value("${jwt-seceret}")
+    private String jwtSecret;
 }

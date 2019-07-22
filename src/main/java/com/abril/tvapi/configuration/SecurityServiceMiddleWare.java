@@ -18,7 +18,7 @@ public class SecurityServiceMiddleWare extends OncePerRequestFilter {
   RedisService redisService;
 
   private static final String[] TO_EXCLUDE = {
-      "/api/user"
+      "/api/user/logIn"
   };
 
   @Override
@@ -31,8 +31,9 @@ public class SecurityServiceMiddleWare extends OncePerRequestFilter {
       return;
     }
 
+    String token = request.getHeader("token");
     //validar que el token del header
-    this.redisService.get(request.getHeader("autorization"));
+    RedisService redisService = this.redisService.get(token);
 
     filterChain.doFilter(request, response);
   }

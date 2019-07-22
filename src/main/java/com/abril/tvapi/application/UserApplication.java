@@ -1,8 +1,12 @@
 package com.abril.tvapi.application;
 
 import com.abril.tvapi.entity.User;
+import com.abril.tvapi.entity.dto.LogInDto;
 import com.abril.tvapi.entity.dto.UserDto;
 import com.abril.tvapi.repository.UserRepository;
+import com.abril.tvapi.services.SecurityService;
+import com.abril.tvapi.services.RedisService;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,12 @@ public class UserApplication {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    RedisService redisService;
+
+    @Autowired
+    SecurityService securityService;
+
     public Optional<User> findByEmail(String email){
         Assert.notNull(email, "email no debe ser null");
         Assert.hasText(email, "email no debe ser vacio");
@@ -28,16 +38,17 @@ public class UserApplication {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getName(), "name no debe ser null");
         Assert.notNull(userDto.getLastName(), "lastName no debe ser null");
+        Assert.notNull(userDto.getUserName(), "userName no debe ser null");
         Assert.notNull(userDto.getBirthday(), "birthday no debe ser null");
         Assert.notNull(userDto.getEmail(), "email no debe ser null");
         Assert.notNull(userDto.getPassword(), "password no debe ser null");
         Assert.notNull(userDto.getRole(), "role no debe ser null");
         Assert.hasText(userDto.getName(), "name no debe ser vacio");
         Assert.hasText(userDto.getLastName(), "lastName no debe ser vacio");
+        Assert.hasText(userDto.getUserName(), "userName no debe ser vacio");
         Assert.hasText(userDto.getEmail(), "email no debe ser vacio");
         Assert.hasText(userDto.getPassword(), "password no debe ser vacio");
         Assert.hasText(userDto.getRole(), "role no debe ser vacio");
-
 
         Optional<User> optionalUser = this.findByEmail(userDto.getEmail());
         if(optionalUser.isPresent()){
@@ -94,8 +105,8 @@ public class UserApplication {
         Optional<User> optionalUser = this.userRepository.findById(id);
         Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese id");
 
-        Boolean statusIsPresent = Optional.of(status).filter(y -> y.equals(User.USER_STATUS_ACTIVO) ||
-                y.equals(User.USER_STATUS_INACTIVO)).isPresent();
+        Boolean statusIsPresent = Optional.of(status).filter(y -> y.equals(User.USER_STATUS_ACTIVE) ||
+                y.equals(User.USER_STATUS_INACTIVE)).isPresent();
         Assert.isTrue(statusIsPresent, "No existe el status " + status);
 
         User user = optionalUser.get();
@@ -108,20 +119,42 @@ public class UserApplication {
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    public ResponseEntity<User> logIn(String email, String password) throws Exception {
-        Assert.notNull(email, "email no debe ser null");
+    public ResponseEntity<LogInDto> logIn(LogInDto logInDto) throws Exception {
+        Assert.notNull(logInDto, "logInDto no debe ser null");
+
+        String userName = logInDto.getUserName();
+        String password = logInDto.getPassword();
+
+        Assert.notNull(userName, "email no debe ser null");
         Assert.notNull(password, "password no debe ser null");
-        Assert.hasText(email, "email no debe ser vacio");
+        Assert.hasText(userName, "email no debe ser vacio");
         Assert.hasText(password, "password no debe ser vacio");
 
-        Optional<User> optionalUser = this.findByEmail(email);
+        Optional<User> optionalUser = this.findByEmail(userName);
         Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese email");
 
         User user = optionalUser.get();
 
+        Boolean correctStatus = Optional.of(user.getStatus()).filter(y -> y.equals(User.USER_STATUS_ACTIVE)).isPresent();
+        Assert.isTrue(correctStatus, "El usuario debe tener status " + User.USER_STATUS_ACTIVE);
+
         Boolean correctPassword = BCrypt.checkpw(password, user.getPassword());
         Assert.isTrue(correctPassword, "La contraseña es incorrecta");
 
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        Optional<JSONObject> redisUser = Optional.ofNullable(this.redisService.get(userName).toJSon());
+        String token = "";
+        if(redisUser.isPresent()){
+            token = redisUser.get().getString("token");
+        }else{
+            token = this.securityService.encode(userName);
+        }
+
+        Assert.notNull(token, "El token de usuario es null");
+        Assert.hasText(token, "El token de usuario es vacio");
+
+        logInDto.setToken(token);
+        logInDto.setId(user.getId());
+
+        return new ResponseEntity<>(logInDto, HttpStatus.OK);
     }
 }

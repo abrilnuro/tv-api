@@ -69,7 +69,7 @@ public class DirectorApplication {
 
         User user = optionalUser.get();
 
-        Boolean userStatus = Optional.of(user.getStatus()).filter(y -> y.equals(User.USER_STATUS_ACTIVO)).isPresent();
+        Boolean userStatus = Optional.of(user.getStatus()).filter(y -> y.equals(User.USER_STATUS_ACTIVE)).isPresent();
         Assert.isTrue(userStatus,"El usuario se encuentra con estatus inactivo");
 
         Boolean userRole = Optional.of(user.getRole()).filter(y -> y.equals(User.USER_ROLE_ADMIN)).isPresent();

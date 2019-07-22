@@ -17,8 +17,8 @@ public class User {
 
     public final static String USER_ROLE_USER = "user";
     public final static String USER_ROLE_ADMIN = "admin";
-    public final static String USER_STATUS_ACTIVO = "activo";
-    public final static String USER_STATUS_INACTIVO = "inactivo";
+    public final static String USER_STATUS_ACTIVE = "active";
+    public final static String USER_STATUS_INACTIVE = "inactive";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,8 @@ public class User {
     private String name;
 
     private String lastName;
+
+    private String userName;
 
     private String email;
 
