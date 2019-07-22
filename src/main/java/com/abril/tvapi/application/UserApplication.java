@@ -34,7 +34,7 @@ public class UserApplication {
         return this.userRepository.findByEmail(email);
     }
 
-    public ResponseEntity<User> saveUser(UserDto userDto) throws Exception {
+    public ResponseEntity<UserDto> saveUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getName(), "name no debe ser null");
         Assert.notNull(userDto.getLastName(), "lastName no debe ser null");
@@ -50,9 +50,14 @@ public class UserApplication {
         Assert.hasText(userDto.getPassword(), "password no debe ser vacio");
         Assert.hasText(userDto.getRole(), "role no debe ser vacio");
 
-        Optional<User> optionalUser = this.findByEmail(userDto.getEmail());
-        if(optionalUser.isPresent()){
-            throw new Exception("Ya existe un usuario con ese correo");
+        Boolean existsUserName = this.userRepository.existsByUserName(userDto.getUserName());
+        if(existsUserName){
+            throw new Exception("Ya existe un usuario con ese userName");
+        }
+
+        Boolean existsEmail = this.userRepository.existsByEmail(userDto.getEmail());
+        if(existsEmail){
+            throw new Exception("Ya existe un usuario con ese email");
         }
 
         String role = userDto.getRole();
@@ -72,7 +77,9 @@ public class UserApplication {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(save, HttpStatus.OK);
+        userDto.setId(save.getId());
+
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     public ResponseEntity<User> updateUser(UserDto userDto) {

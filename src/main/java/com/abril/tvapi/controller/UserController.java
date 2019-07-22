@@ -16,7 +16,7 @@ public class UserController {
     private UserApplication userApplication;
 
     @PostMapping
-    public ResponseEntity<User> save(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<UserDto> save(@RequestBody UserDto userDto) throws Exception {
          return this.userApplication.saveUser(userDto);
     }
 
