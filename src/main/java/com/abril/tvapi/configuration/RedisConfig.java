@@ -10,8 +10,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -68,6 +71,16 @@ public class RedisConfig {
     redisTemplate.setHashKeySerializer(new StringRedisSerializer());
     redisTemplate.afterPropertiesSet();
     return redisTemplate;
+  }
+
+  public Boolean redisIsAvalible(){
+    try {
+      ValueOperations <String, Boolean> booleanRedis = boolRedisTemplate().opsForValue();
+      booleanRedis.set( "test", true, 1, TimeUnit.DAYS );
+      return true;
+    }catch ( Exception ex ){
+      return false;
+    }
   }
 
 }

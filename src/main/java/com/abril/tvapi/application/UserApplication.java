@@ -148,8 +148,9 @@ public class UserApplication {
         Boolean correctPassword = BCrypt.checkpw(password, user.getPassword());
         Assert.isTrue(correctPassword, "La contraseña es incorrecta");
 
-        Optional<JSONObject> redisUser = Optional.ofNullable(this.redisService.get(userName).toJSon());
         String token = "";
+        Optional<JSONObject> redisUser = Optional.ofNullable(this.redisService.get(userName));
+
         if(redisUser.isPresent()){
             token = redisUser.get().getString("token");
             String subject = this.securityService.decode(token);
