@@ -24,7 +24,7 @@ public class SecurityServiceMiddleWare extends OncePerRequestFilter {
   RedisConfig redisConfig;
 
   private static final String[] TO_EXCLUDE = {
-      "/api/user/logIn"
+      "/api/user/log-in", "/api/user/sign-in"
   };
 
   @Override

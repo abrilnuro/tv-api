@@ -15,7 +15,7 @@ public class UserController {
     @Autowired
     private UserApplication userApplication;
 
-    @PostMapping
+    @PostMapping("sign-in")
     public ResponseEntity<UserDto> save(@RequestBody UserDto userDto) throws Exception {
          return this.userApplication.saveUser(userDto);
     }
@@ -31,7 +31,7 @@ public class UserController {
         return this.userApplication.updateStatus(id, status);
     }
 
-    @PostMapping("login")
+    @PostMapping("log--in")
     public ResponseEntity<LogInDto> logIn(@RequestBody LogInDto logInDto) throws Exception {
         return this.userApplication.logIn(logInDto);
     }
