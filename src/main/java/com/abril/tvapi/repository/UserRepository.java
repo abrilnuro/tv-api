@@ -11,6 +11,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     Optional<User> findByEmail(@Param("email") String email);
 
+    Optional<User> findByUserName(@Param("userName") String userName);
+
     Boolean existsByUserName(@Param("userName") String userName);
 
     Boolean existsByEmail(@Param("email") String email);

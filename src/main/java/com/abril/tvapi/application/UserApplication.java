@@ -23,10 +23,10 @@ public class UserApplication {
     private UserRepository userRepository;
 
     @Autowired
-    RedisService redisService;
+    private RedisService redisService;
 
     @Autowired
-    SecurityService securityService;
+    private SecurityService securityService;
 
     public Optional<User> findByEmail(String email){
         Assert.notNull(email, "email no debe ser null");
@@ -137,8 +137,8 @@ public class UserApplication {
         Assert.hasText(userName, "email no debe ser vacio");
         Assert.hasText(password, "password no debe ser vacio");
 
-        Optional<User> optionalUser = this.findByEmail(userName);
-        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese email");
+        Optional<User> optionalUser = this.userRepository.findByUserName(userName);
+        Assert.isTrue(optionalUser.isPresent(), "No existe usuario con ese userName");
 
         User user = optionalUser.get();
 
