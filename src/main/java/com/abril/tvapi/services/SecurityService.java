@@ -1,6 +1,7 @@
 package com.abril.tvapi.services;
 
 import com.abril.tvapi.configuration.GlobalConfig;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -17,6 +18,9 @@ public class SecurityService {
 
     @Autowired
     GlobalConfig globalConfig;
+
+    @Autowired
+    RedisService redisService;
 
     public String encode(String user) {
         Assert.notNull(user, "user no debe ser null");
@@ -36,7 +40,6 @@ public class SecurityService {
         return token;
     }
 
-
     public String decode(String token) {
         Assert.notNull(token, "token no debe ser null");
         Assert.hasText(token, "token no debe ser vacio");
@@ -53,5 +56,16 @@ public class SecurityService {
         }
 
         return subject;
+    }
+
+    public String getToken(String userName) throws Exception {
+        Assert.notNull(userName, "user no debe ser null");
+        Assert.hasText(userName, "user no debe ser vacio");
+
+        String token = this.encode(userName);
+        JSONObject jsonObject = new JSONObject().put("token", token);
+        this.redisService.setIfIsAvailable(userName, jsonObject);
+
+        return token;
     }
 }

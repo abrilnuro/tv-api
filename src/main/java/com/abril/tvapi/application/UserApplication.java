@@ -152,12 +152,10 @@ public class UserApplication {
         String token = "";
         if(redisUser.isPresent()){
             token = redisUser.get().getString("token");
+            String subject = this.securityService.decode(token);
         }else{
-            token = this.securityService.encode(userName);
+            token = this.securityService.getToken(userName);
         }
-
-        Assert.notNull(token, "El token de usuario es null");
-        Assert.hasText(token, "El token de usuario es vacio");
 
         logInDto.setToken(token);
         logInDto.setId(user.getId());
