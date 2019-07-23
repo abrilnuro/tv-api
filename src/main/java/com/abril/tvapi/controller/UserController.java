@@ -3,6 +3,7 @@ package com.abril.tvapi.controller;
 import com.abril.tvapi.application.UserApplication;
 import com.abril.tvapi.entity.User;
 import com.abril.tvapi.entity.dto.LogInDto;
+import com.abril.tvapi.entity.dto.SignInDto;
 import com.abril.tvapi.entity.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class UserController {
     private UserApplication userApplication;
 
     @PostMapping("sign-in")
-    public ResponseEntity<UserDto> save(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<SignInDto> save(@RequestBody UserDto userDto) throws Exception {
          return this.userApplication.saveUser(userDto);
     }
 
@@ -31,7 +32,7 @@ public class UserController {
         return this.userApplication.updateStatus(id, status);
     }
 
-    @PostMapping("log--in")
+    @PostMapping("log-in")
     public ResponseEntity<LogInDto> logIn(@RequestBody LogInDto logInDto) throws Exception {
         return this.userApplication.logIn(logInDto);
     }

@@ -18,7 +18,7 @@ public class RedisService {
     @Autowired
     private RedisConfig redisConfig;
 
-    public void save(String key, String value){
+    public void saveValue(String key, String value){
         Assert.notNull(key, "key no debe ser nulo.");
         Assert.notNull(value, "value no debe ser nulo.");
         Assert.hasText(key, "key no debe ser vacía.");
@@ -36,9 +36,9 @@ public class RedisService {
         }
     }
 
-    public JSONObject get(String key){
-        Assert.notNull (key, "La llave no debe ser null.");
-        Assert.hasText(key, "El valor no debe ser vacía.");
+    public JSONObject getValue(String key){
+        Assert.notNull (key, "key no debe ser null.");
+        Assert.hasText(key, "key no debe ser vacía.");
 
         ValueOperations<String, JSONObject> jsonRedis = jsonRedisTemplate.opsForValue();
         Boolean redisIsAvalible = this.redisConfig.redisIsAvalible();

@@ -2,6 +2,7 @@ package com.abril.tvapi.application;
 
 import com.abril.tvapi.entity.User;
 import com.abril.tvapi.entity.dto.LogInDto;
+import com.abril.tvapi.entity.dto.SignInDto;
 import com.abril.tvapi.entity.dto.UserDto;
 import com.abril.tvapi.repository.UserRepository;
 import com.abril.tvapi.services.SecurityService;
@@ -34,7 +35,7 @@ public class UserApplication {
         return this.userRepository.findByEmail(email);
     }
 
-    public ResponseEntity<UserDto> saveUser(UserDto userDto) throws Exception {
+    public ResponseEntity<SignInDto> saveUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getName(), "name no debe ser null");
         Assert.notNull(userDto.getLastName(), "lastName no debe ser null");
@@ -77,9 +78,15 @@ public class UserApplication {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        userDto.setId(save.getId());
+        String token = this.securityService.encode(save.getUserName());
+        this.redisService.saveValue(save.getUserName(), token);
 
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+        SignInDto signInDto = new SignInDto();
+        signInDto.setToken(token);
+        signInDto.setId(save.getId());
+        signInDto.setUserName(save.getUserName());
+
+        return new ResponseEntity<>(signInDto, HttpStatus.OK);
     }
 
     public ResponseEntity<User> updateUser(UserDto userDto) {
@@ -149,11 +156,10 @@ public class UserApplication {
         Assert.isTrue(correctPassword, "La contraseña es incorrecta");
 
         String token = "";
-        Optional<JSONObject> redisUser = Optional.ofNullable(this.redisService.get(userName));
+        Optional<JSONObject> redisUser = Optional.ofNullable(this.redisService.getValue(userName));
 
         if(redisUser.isPresent()){
             token = redisUser.get().getString("token");
-            String subject = this.securityService.decode(token);
         }else{
             token = this.securityService.getToken(userName);
         }
