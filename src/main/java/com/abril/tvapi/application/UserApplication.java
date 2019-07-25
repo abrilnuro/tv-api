@@ -29,12 +29,6 @@ public class UserApplication {
     @Autowired
     private SecurityService securityService;
 
-    public Optional<User> findByEmail(String email){
-        Assert.notNull(email, "email no debe ser null");
-        Assert.hasText(email, "email no debe ser vacio");
-        return this.userRepository.findByEmail(email);
-    }
-
     public ResponseEntity<SignInDto> saveUser(UserDto userDto) throws Exception {
         Assert.notNull(userDto, "userDto no debe ser null");
         Assert.notNull(userDto.getName(), "name no debe ser null");
