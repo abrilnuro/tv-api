@@ -22,6 +22,7 @@ public class TvShow {
 
     private String resume;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mazatlan")
     private Date releaseDate;
 
     private String language;
