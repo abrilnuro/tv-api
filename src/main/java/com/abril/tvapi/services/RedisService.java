@@ -18,25 +18,22 @@ public class RedisService {
     @Autowired
     private RedisConfig redisConfig;
 
-    public void saveValue(String key, String value){
+    public void saveValue(String key, JSONObject value) throws Exception {
         Assert.notNull(key, "key no debe ser nulo.");
         Assert.notNull(value, "value no debe ser nulo.");
         Assert.hasText(key, "key no debe ser vacía.");
-        Assert.hasText(value, "value no debe ser vacía.");
 
         ValueOperations<String, JSONObject> jsonRedis = jsonRedisTemplate.opsForValue();
         Boolean redisIsAvalible = this.redisConfig.redisIsAvalible();
 
         if(redisIsAvalible) {
-            JSONObject informacion = jsonRedis.get(key);
-
-            if (informacion == null) {
-                jsonRedis.set(key, new JSONObject(value), 30, TimeUnit.MINUTES);
-            }
+            jsonRedis.set(key, value, 30, TimeUnit.MINUTES);
+        }else{
+            throw new Exception("No fue posible guardar en redis.");
         }
     }
 
-    public JSONObject getValue(String key){
+    public JSONObject getValue(String key) throws Exception {
         Assert.notNull (key, "key no debe ser null.");
         Assert.hasText(key, "key no debe ser vacía.");
 
@@ -46,6 +43,8 @@ public class RedisService {
         JSONObject json = null;
         if(redisIsAvalible) {
             json = jsonRedis.get(key);
+        }else {
+            throw new Exception("No fue posible obtener valor de redis.");
         }
 
         return json;

@@ -46,7 +46,12 @@ public class SecurityServiceMiddleWare extends OncePerRequestFilter {
     Assert.hasText(userName, "El userName no debe ser vacio");
 
     if(this.redisConfig.redisIsAvalible ()){
-      JSONObject jsonObject = this.redisService.getValue(userName);
+      JSONObject jsonObject = null;
+      try {
+        jsonObject = this.redisService.getValue(userName);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       Assert.notNull(jsonObject, "Ocurrió un problema con tu sesión");
 
       String storedToken = jsonObject.getString("token");

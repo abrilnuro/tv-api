@@ -73,7 +73,8 @@ public class UserApplication {
         }
 
         String token = this.securityService.encode(save.getUserName());
-        this.redisService.saveValue(save.getUserName(), token);
+        JSONObject jsonToken = new JSONObject().put("token", token);
+        this.redisService.saveValue(save.getUserName(), jsonToken);
 
         SignInDto signInDto = new SignInDto();
         signInDto.setToken(token);

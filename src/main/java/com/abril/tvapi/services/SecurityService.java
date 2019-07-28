@@ -1,6 +1,7 @@
 package com.abril.tvapi.services;
 
 import com.abril.tvapi.configuration.GlobalConfig;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -62,7 +63,8 @@ public class SecurityService {
         Assert.hasText(userName, "userName no debe ser vacio");
 
         String token = this.encode(userName);
-        this.redisService.saveValue(userName, token);
+        JSONObject jsonObject = new JSONObject().put("token", token);
+        this.redisService.saveValue(userName, jsonObject);
 
         return token;
     }
